@@ -14,6 +14,8 @@ def get_dorks_link(title: str):
     """
     API_KEY, SEARCH_ENGINE_ID = parse_credentials()
 
+    print("Executing google dorks...\n")
+
     query = quote(f"allintitle:\"{title}\"")
     num = 10
     start = 1
@@ -36,6 +38,6 @@ def get_dorks_link(title: str):
         else:
             break
 
-    print(f"{len(dorks_links)} was/were found using the same title.")
+    print(f"{len(dorks_links)} link(s) was/were found using the same title.\n")
 
     return dorks_links
