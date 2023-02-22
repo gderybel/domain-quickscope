@@ -26,7 +26,6 @@ def get_dorks_link(title: str):
         response = get(url, timeout=5)
 
         data = response.json()
-        print(data)
         if 'error' in data and data['error']['message'] == 'API key not valid. Please pass a valid API key.':
             exit("The given API key is not known.")
 
