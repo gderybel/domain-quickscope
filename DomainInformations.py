@@ -1,6 +1,8 @@
 from requests import get, ReadTimeout
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from whois import whois
+from sys import exit
 
 def get_domain_title(domain: str):
     """
@@ -22,3 +24,28 @@ def get_screenshot(url: str):
     driver.get(url)
     filename = '/'.join(url.split('/')[2:3])[:30]
     driver.save_screenshot(f"{filename}.png")
+
+def get_domain_informations(domain: str):
+    """
+        This function returns some informations about a domain.
+    """
+    domain_info = whois(domain)
+
+    if not all(domain_info.get(var) is None for var in domain_info):
+        result = f"""
+____________________________________________________________________________________________________________________________
+
+[+]Domain: {domain_info.domain},
+[+]Status: {domain_info.get('status')},
+[+]Registrar: {domain_info.get('registrar')},
+[+]Update time: {domain_info.get('updated_date')},
+[+]Expiration time: {domain_info.get('expiration_date')},
+[+]Servers names: {domain_info.get('name_servers')},
+[+]Emails: {domain_info.get('emails')}
+
+ ____________________________________________________________________________________________________________________________
+"""
+        print(result)
+    else:
+        exit("\nTarget not valid.")
+    return domain_info
