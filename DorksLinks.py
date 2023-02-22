@@ -1,5 +1,5 @@
-import requests
 from urllib.parse import quote
+from requests import get
 from ConfigIniParser import parse_credentials
 
 def get_dorks_link(title: str):
@@ -23,7 +23,7 @@ def get_dorks_link(title: str):
     while True:
         url = f"https://www.googleapis.com/customsearch/v1?key={API_KEY}&cx={SEARCH_ENGINE_ID}&q={query}&num={num}&start={start}"
 
-        response = requests.get(url, timeout=5)
+        response = get(url, timeout=5)
 
         data = response.json()
         print(data)

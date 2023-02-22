@@ -1,8 +1,8 @@
+from sys import exit
 from requests import get, ReadTimeout
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from whois import whois
-from sys import exit
 
 def get_domain_title(domain: str):
     """
