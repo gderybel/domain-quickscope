@@ -3,6 +3,8 @@ from requests import get, ReadTimeout
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from whois import whois
+from os import path, makedirs
+
 
 def get_domain_title(domain: str):
     """
@@ -20,10 +22,13 @@ def get_screenshot(url: str):
     """
         This function will take a screenshot from a given URL.
     """
+    dir_path = 'domain_output'
+    if not path.exists(dir_path):
+        makedirs(dir_path)
     driver = webdriver.Firefox()
     driver.get(url)
     filename = '/'.join(url.split('/')[2:3])[:30]
-    driver.save_screenshot(f"{filename}.png")
+    driver.save_screenshot(f"{dir_path}/{filename}.png")
 
 def get_domain_informations(domain: str):
     """
