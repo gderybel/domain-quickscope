@@ -9,6 +9,8 @@ def get_dorks_link(title: str):
 
         I use Google API, because, some captcha might appears, which is blocking.
         Also, a Too Many Requests exception is thrown when using request & bs4.
+
+        This API is limiting at 100 requests per day.
     """
     API_KEY, SEARCH_ENGINE_ID = parse_credentials()
 
@@ -24,6 +26,9 @@ def get_dorks_link(title: str):
         response = requests.get(url, timeout=5)
 
         data = response.json()
+        print(data)
+        if 'error' in data and data['error']['message'] == 'API key not valid. Please pass a valid API key.':
+            exit("The given API key is not known.")
 
         if 'items' in data:
             for item in data['items']:
