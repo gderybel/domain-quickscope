@@ -2,3 +2,4 @@
 .google-cookie
 __pycache__
 *.png
+*.html

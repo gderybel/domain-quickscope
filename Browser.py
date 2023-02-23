@@ -46,6 +46,7 @@ class Browser():
             '--disable-blink-features=AutomationControlled',
             )
 
+
         for argument in WEBDRIVER_ARGUMENTS:
             options.add_argument(argument)
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -56,3 +57,8 @@ class Browser():
         self.get = self.driver.get
         self.kill = self.driver.quit
         self.screenshot = self.driver.save_screenshot
+
+
+    def get_title(self, url):
+        self.driver.get(url)
+        return self.driver.title

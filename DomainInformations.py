@@ -1,23 +1,19 @@
 from sys import exit as sysexit
 from os import path, makedirs
-from requests import get, ReadTimeout
-from bs4 import BeautifulSoup
 from selenium.common.exceptions import TimeoutException
 from whois import whois
 import dnstwist
 from Browser import Browser
+from Domain import Domain
 
 
-def get_domain_title(domain: str):
+def get_domain_title(domain: str, browser: Browser):
     """
         This function returns the title of a webpage.
     """
-    try:
-        response = get(domain, timeout=5)
-    except ReadTimeout:
-        sysexit('The script was unable to contact this url, please try with another one.\n')
-    soup = BeautifulSoup(response.content, 'html.parser')
-    title = soup.title.string.strip()
+    if not domain.startswith("http"):
+        domain = f"http://{domain}"
+    title = browser.get_title(domain)
     return title
 
 def get_screenshot(url: str, browser: Browser):
@@ -27,7 +23,10 @@ def get_screenshot(url: str, browser: Browser):
     dir_path = 'domain_output'
     if not path.exists(dir_path):
         makedirs(dir_path)
-    
+
+    if not url.startswith("http"):
+        url = f"http://{url}"
+
     try:
         browser.get(url)
     except TimeoutException:
@@ -35,32 +34,34 @@ def get_screenshot(url: str, browser: Browser):
 
     filename = '/'.join(url.split('/')[2:3])[:30]
 
-    browser.screenshot(f"{dir_path}/{filename}.png")
+    filepath = f"{dir_path}/{filename}.png"
 
-def get_domain_informations(domain: str):
+    browser.screenshot(filepath)
+
+    return filepath
+
+def get_domain_informations(domain: str, browser: Browser):
     """
         This function returns some informations about a domain.
     """
     domain_info = whois(domain)
 
-    if not all(domain_info.get(var) is None for var in domain_info):
-        result = f"""
-____________________________________________________________________________________________________________________________
-
-[+]Domain: {domain_info.domain},
-[+]Status: {domain_info.get('status')},
-[+]Registrar: {domain_info.get('registrar')},
-[+]Update time: {domain_info.get('updated_date')},
-[+]Expiration time: {domain_info.get('expiration_date')},
-[+]Servers names: {domain_info.get('name_servers')},
-[+]Emails: {domain_info.get('emails')}
-
- ____________________________________________________________________________________________________________________________
-"""
-        print(result)
+    if any(item is not None for item in domain_info):
+        domain__object = Domain(
+            domain_info.domain,
+            domain,
+            domain_info.org,
+            domain_info.registrar,
+            domain_info.creation_date[0] if isinstance(domain_info.creation_date, list) else domain_info.creation_date,
+            domain_info.updated_date[0] if isinstance(domain_info.updated_date, list) else domain_info.update_date,
+            domain_info.expiration_date[0] if isinstance(domain_info.expiration_date, list) else domain_info.expiration_date,
+            domain_info.emails,
+            domain_info.country,
+            get_screenshot(domain, browser)
+        )
+        return domain__object
     else:
         sysexit("\nTarget not valid.")
-    return domain_info
 
 def get_related_domain_names(domain: str):
     """
@@ -72,7 +73,7 @@ def get_related_domain_names(domain: str):
     related_domains = []
     for result in dnstwist_result:
         related_domains.append(result['domain'])
-    
+
     print(f"{len(related_domains)} domain(s) was/were found.\n")
 
     return related_domains

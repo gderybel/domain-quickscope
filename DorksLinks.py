@@ -16,6 +16,9 @@ def get_dorks_link(title: str):
 
     print("Executing google dorks...\n")
 
+    if title == "":
+        return None
+
     query = quote(f"allintitle:\"{title}\"")
     num = 10
     start = 1
