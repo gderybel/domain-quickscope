@@ -1,5 +1,4 @@
 from datetime import datetime
-from Domain import Domain
 
 def report_generation(domains :list):
     """

@@ -204,13 +204,17 @@ def generate_permutations(domain: str) -> list:
     insertion_permutations = [permutation + '.com' for permutation in insertion_permutations]
     tld_permutations = generate_tld_permutations(name)
 
-    return list(
-        set(
-            character_permutations +
-            hyphenation_permutations +
-            bitsquatting_permutations +
-            homoglyph_permutations +
-            insertion_permutations +
-            tld_permutations
-            )
-        )
+    all_permutations = (
+        character_permutations +
+        hyphenation_permutations +
+        bitsquatting_permutations +
+        homoglyph_permutations +
+        insertion_permutations +
+        tld_permutations
+    )
+
+    all_permutations = [x.lower() for x in all_permutations]
+
+    all_permutations = list(set(all_permutations))
+
+    return all_permutations

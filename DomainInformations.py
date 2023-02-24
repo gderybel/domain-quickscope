@@ -1,10 +1,9 @@
-from sys import exit as sysexit
 from os import path, makedirs
-from selenium.common.exceptions import TimeoutException
-from whois import whois
-import dnstwist
+from selenium.common.exceptions import TimeoutException, WebDriverException
+from whois import whois, parser
 from Browser import Browser
 from Domain import Domain
+from permutation import generate_permutations
 
 
 def get_domain_title(domain: str, browser: Browser):
@@ -27,11 +26,6 @@ def get_screenshot(url: str, browser: Browser):
     if not url.startswith("http"):
         url = f"http://{url}"
 
-    try:
-        browser.get(url)
-    except TimeoutException:
-        pass
-
     filename = '/'.join(url.split('/')[2:3])[:30]
 
     filepath = f"{dir_path}/{filename}.png"
@@ -44,9 +38,18 @@ def get_domain_informations(domain: str, browser: Browser):
     """
         This function returns some informations about a domain.
     """
-    domain_info = whois(domain)
 
-    if any(item is not None for item in domain_info):
+    try:
+        domain_info = whois(domain)
+    except parser.PywhoisError:
+        return None
+
+    try:
+        browser.get(domain)
+    except (TimeoutException, WebDriverException):
+        return None
+
+    if any(item is not None for item in domain_info.values()):
         domain__object = Domain(
             domain_info.domain,
             domain,
@@ -61,7 +64,7 @@ def get_domain_informations(domain: str, browser: Browser):
         )
         return domain__object
     else:
-        sysexit("\nTarget not valid.")
+        return None
 
 def get_related_domain_names(domain: str):
     """
@@ -69,11 +72,9 @@ def get_related_domain_names(domain: str):
         looking like the given one.
     """
     print("Looking for related domain names...\n")
-    dnstwist_result = dnstwist.run(domain=domain, format=None, registered=True)
-    related_domains = []
-    for result in dnstwist_result:
-        related_domains.append(result['domain'])
+    permutations = generate_permutations(domain)
+    permutations = [f"http://{permutation}" for permutation in permutations]
 
-    print(f"{len(related_domains)} domain(s) was/were found.\n")
+    print(f"{len(permutations)} domain(s) was/were found.\n")
 
-    return related_domains
+    return permutations
