@@ -4,6 +4,7 @@ from whois import whois, parser
 from Browser import Browser
 from Domain import Domain
 from permutation import generate_permutations
+from socket import gethostbyname, error as sock_error
 
 
 def get_domain_title(domain: str, browser: Browser):
@@ -38,6 +39,9 @@ def get_domain_informations(domain: str, browser: Browser):
     """
         This function returns some informations about a domain.
     """
+
+    if not is_resolvable(domain):
+        return None
 
     try:
         domain_info = whois(domain)
@@ -78,3 +82,10 @@ def get_related_domain_names(domain: str):
     print(f"{len(permutations)} domain(s) was/were found.\n")
 
     return permutations
+
+def is_resolvable(domain: str):
+    try:
+        gethostbyname(domain.split('/', 3)[2])
+        return True
+    except sock_error:
+        return False
