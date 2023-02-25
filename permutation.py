@@ -136,8 +136,8 @@ def generate_insertion_permutations(name: str) -> list:
     """
     insertion_permutations = []
     for i in range(len(name)+1):
-        for c in string.ascii_lowercase + string.digits + "-_":
-            new_domain = name[:i] + c + name[i:]
+        for j in string.ascii_lowercase + string.digits + "-_":
+            new_domain = name[:i] + j + name[i:]
             insertion_permutations.append(new_domain)
     return insertion_permutations
 
@@ -154,8 +154,8 @@ def open_tld(file: str = 'tld_list') -> list:
     list
         List containing every line of the file.
     """
-    with open(file, 'r', encoding='UTF-8') as f:
-        tld_list = [line.strip() for line in f.readlines()]
+    with open(file, 'r', encoding='UTF-8') as file_stream:
+        tld_list = [line.strip() for line in file_stream.readlines()]
     return tld_list
 
 def generate_tld_permutations(name: str) -> list:

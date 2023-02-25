@@ -1,4 +1,5 @@
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import WebDriverException
 from selenium import webdriver
 
 class Browser():
@@ -20,6 +21,21 @@ class Browser():
         self.screenshot = self.driver.save_screenshot
 
 
-    def get_title(self, url):
-        self.driver.get(url)
-        return self.driver.title
+    def get_title(self, url: str) -> str | None:
+        """This function retrieves title from a webpage
+
+        Parameters
+        ----------
+        url : str
+            The url to fetch
+
+        Returns
+        -------
+        str | None
+            The webpage title or none if nothing was found
+        """
+        try:
+            self.driver.get(url)
+            return self.driver.title
+        except WebDriverException:
+            return None

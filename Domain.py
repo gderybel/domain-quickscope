@@ -1,6 +1,9 @@
 from datetime import datetime
 
 class Domain:
+    """ 
+        This class represent a Domain object with every whois informations
+    """
     def __init__(
         self,
         name: str,

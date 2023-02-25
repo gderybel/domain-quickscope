@@ -2,8 +2,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 def report_generation(domains :list):
-    """
-        This function will generate a report showing every similar
+    """This function will generate a report showing every similar
         websites based on Dorks and similar domain names.
 
         The output will be in HTML and will contains the following content :
@@ -11,8 +10,14 @@ def report_generation(domains :list):
         - Title
         - Screenshot
         - Whois informations, with relevent indicators
+
+    Parameters
+    ----------
+    domains : list
+        Domains to include
     """
-    HEAD = """
+
+    head = """
 <!DOCTYPE html>
 <html>
   <head>
@@ -100,7 +105,7 @@ def report_generation(domains :list):
   <body>
     """
 
-    TAIL = """
+    tail = """
   </body>
 </html>"""
 
@@ -138,6 +143,6 @@ def report_generation(domains :list):
 
     current_time = datetime.now().strftime('%Y-%m-%d_%H%M%S')
     with open(f"domain_report_{current_time}.html", 'w', encoding='UTF-8') as file:
-        file.write(HEAD)
+        file.write(head)
         file.write(full_content)
-        file.write(TAIL)
+        file.write(tail)

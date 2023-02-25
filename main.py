@@ -1,21 +1,18 @@
-from DorksLinks import get_dorks_link
-from DomainInformations import get_domain_title, get_related_domain_names, get_domain_informations
-from Browser import Browser
-from ReportGenerator import report_generation
 from time import time
+from dorks_links import get_dorks_links
+from domain_informations import get_domain_title, get_related_domain_names, get_domain_informations
+from browser import Browser
+from report_generator import report_generation
 
 domain = input('Enter a domain or a webpage to test (e.g. : chanel.com) : ')
 
 start = time()
 
-browser = Browser()
+driver = Browser()
 
-title = get_domain_title(domain, browser)
-print(f"""
-The title found is "{title}".
-""")
+title = get_domain_title(domain, driver)
 
-dorks_results = get_dorks_link(title=title)
+dorks_results = get_dorks_links(title=title)
 
 related_domains = get_related_domain_names(domain)
 
@@ -24,16 +21,16 @@ all_domains = related_domains + dorks_results
 del related_domains, dorks_results, title
 
 domains_object_list = []
-count = 0
+COUNT = 0
 for current_domain in all_domains:
-    count +=1
-    print(f"Fetching {count}/{len(all_domains)} : {current_domain.ljust(len(max(all_domains, key=len)))}", end="\r")
-    domain_object = get_domain_informations(current_domain, browser)
+    COUNT +=1
+    print(f"Fetching {COUNT}/{len(all_domains)} : {current_domain.ljust(len(max(all_domains, key=len)))}", end="\r")
+    domain_object = get_domain_informations(current_domain, driver)
     if domain_object:
         domains_object_list.append(domain_object)
 print()
-browser.kill()
-del browser, count, domain_object, all_domains
+driver.kill()
+del driver, COUNT, domain_object, all_domains
 
 report_generation(domains_object_list)
 print(f"\nThe program took {int(time() - start)} seconds to execute.")
