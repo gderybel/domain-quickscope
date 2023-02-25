@@ -3,3 +3,4 @@ selenium
 requests
 tld
 python-dateutil
+scikit-image

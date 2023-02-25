@@ -232,7 +232,8 @@ def remove_duplicate_in_list_of_dicts_by_key(list_of_dicts: list[dict], key: str
     result = []
     for dictionary in list_of_dicts:
         value = dictionary.get(key)
+        value = value.lower()
         if value not in seen:
             seen.add(value)
-            result.append(dictionary)
+            result.append({'domain':value, 'method':dictionary.get('method')})
     return result

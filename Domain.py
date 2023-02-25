@@ -16,7 +16,8 @@ class Domain:
         emails: list,
         country: str,
         screenshot: str,
-        method: str
+        method: str,
+        similarity
     ):
         self.name = name
         self.url = url if url.startswith('http') else f"http://{url}"
@@ -29,3 +30,4 @@ class Domain:
         self.country = country
         self.screenshot = screenshot
         self.method = method
+        self.similarity = similarity

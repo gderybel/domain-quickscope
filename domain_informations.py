@@ -2,6 +2,7 @@ from os import path, makedirs
 from socket import gethostbyname, error as sock_error
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from whois import whois, parser
+from skimage import io, metrics
 from browser import Browser
 from domain import Domain
 from permutation import generate_permutations
@@ -62,7 +63,7 @@ def get_screenshot(url: str, driver: Browser) -> str:
 
     return filepath
 
-def get_domain_informations(domain_name: str, finding_method: str, driver: Browser) -> Domain | None:
+def get_domain_informations(domain_name: str, finding_method: str, driver: Browser, requested_domain_screenshot: str) -> Domain | None:
     """This function returns some informations about a domain.
 
     Parameters
@@ -73,6 +74,8 @@ def get_domain_informations(domain_name: str, finding_method: str, driver: Brows
         The method used to guess that name
     driver : Browser
         The browser to make requests with
+    requested_domain_screenshot : str
+        Path to screenshot of the original domain
 
     Returns
     -------
@@ -94,6 +97,7 @@ def get_domain_informations(domain_name: str, finding_method: str, driver: Brows
         return None
 
     if any(item is not None for item in domain_info.values()):
+        screenshot = get_screenshot(domain_name, driver)
         domain_object = Domain(
             domain_info.domain,
             domain_name,
@@ -104,8 +108,9 @@ def get_domain_informations(domain_name: str, finding_method: str, driver: Brows
             domain_info.expiration_date[0] if isinstance(domain_info.expiration_date, list) else domain_info.expiration_date,
             domain_info.emails,
             domain_info.country,
-            get_screenshot(domain_name, driver),
-            finding_method
+            screenshot,
+            finding_method,
+            check_images_similarity(requested_domain_screenshot, screenshot)
         )
         return domain_object
     else:
@@ -127,7 +132,9 @@ def get_related_domain_names(domain_name: str) -> list[str]:
     """
     print("Looking for related domain names...\n")
     permutations = generate_permutations(domain_name)
-    permutations = [f"http://{permutation}" for permutation in permutations]
+    
+    for permutation in permutations:
+        permutation.update(domain=f"http://{permutation.get('domain')}")
 
     print(f"{len(permutations)} domain(s) was/were found.\n")
 
@@ -151,3 +158,31 @@ def is_resolvable(domain_name: str) -> bool:
         return True
     except sock_error:
         return False
+
+def check_images_similarity(image1 :str, image2: str) -> float:
+    """This function will check similarity between two photos using SSIM algorithm.
+
+    This algorithm compares the structural information of the two images,
+    such as luminance, contrast, and structure.
+
+    Parameters
+    ----------
+    image1 : str
+        Path to image 1
+    image2 : str
+        Path to image 2
+
+    Returns
+    -------
+    float
+        Percentage of similarity
+    """
+    image1 = io.imread(image1, as_gray=True)
+    image2 = io.imread(image2, as_gray=True)
+
+    ssim = metrics.structural_similarity(image1, image2)
+
+    if ssim < 0:
+        ssim = 0
+
+    return round(ssim*100,2)

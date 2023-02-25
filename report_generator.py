@@ -119,6 +119,7 @@ def report_generation(domains :list):
 
     full_content = ""
     for domain in domains:
+
         if not domain.creation_date:
             creation_date_class = 'unknown'
         elif domain.creation_date < (datetime.today() - relativedelta(years=2)):
@@ -127,13 +128,21 @@ def report_generation(domains :list):
             creation_date_class = 'warning'
         else:
             creation_date_class = 'critical'
+
+        if domain.similarity > 75:
+            similarity_class = 'critical'
+        elif domain.similarity > 40:
+            similarity_class = 'warning'
+        else:
+            similarity_class = 'safe'
+
         content = f"""
     <div class="card">
         <div class="image-container">
             <img src="{domain.screenshot}" alt="card image">
         </div>
         <div class="content">
-        <h2>{domain.name} <span class="badge info">{domain.method}</span></h2>
+        <h2>{domain.name} <span class="badge info">{domain.method}</span> <span class="badge {similarity_class}">{domain.similarity}%</span></h2>
             <ul>
                 <li><strong>URL:</strong> <a href="{domain.url}">{domain.url}</a></li>
                 <li><strong>Organization:</strong> {domain.organization}</li>
