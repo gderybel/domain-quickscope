@@ -50,7 +50,7 @@ def get_domain_informations(domain: str, browser: Browser):
         return None
 
     if any(item is not None for item in domain_info.values()):
-        domain__object = Domain(
+        domain_object = Domain(
             domain_info.domain,
             domain,
             domain_info.org,
@@ -62,7 +62,7 @@ def get_domain_informations(domain: str, browser: Browser):
             domain_info.country,
             get_screenshot(domain, browser)
         )
-        return domain__object
+        return domain_object
     else:
         return None
 

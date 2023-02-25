@@ -18,9 +18,9 @@ class Domain:
         self.url = url if url.startswith('http') else f"http://{url}"
         self.organization = organization
         self.registrar = registrar
-        self.creation_date = creation_date
-        self.update_date = update_date
-        self.expiration_date = expiration_date
+        self.creation_date = creation_date if isinstance(creation_date, datetime) else None
+        self.update_date = update_date if isinstance(update_date, datetime) else None
+        self.expiration_date = expiration_date if isinstance(expiration_date, datetime) else None
         self.emails = ', '.join(emails) if isinstance(emails, list) else emails
         self.country = country
         self.screenshot = screenshot

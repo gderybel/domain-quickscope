@@ -2,3 +2,4 @@ python-whois
 selenium
 requests
 tld
+python-dateutil

@@ -1,4 +1,5 @@
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 def report_generation(domains :list):
     """
@@ -69,6 +70,30 @@ def report_generation(domains :list):
         .content li {
         margin-bottom: 5px;
         }
+
+        .badge {
+            border: none;
+            color: white;
+            padding: 2px 5px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .critical{
+            background-color: #DC3545;
+        }
+
+        .warning{
+            background-color: #FFC300;
+        }
+
+        .safe{
+            background-color: #008000;
+        }
+
+        .unknown{
+            background-color: #7C7C7C
+        }
     </style>
   </head>
 
@@ -81,8 +106,16 @@ def report_generation(domains :list):
 
     full_content = ""
     for domain in domains:
+        if not domain.creation_date:
+            creation_date_class = 'unknown'
+        elif domain.creation_date < (datetime.today() - relativedelta(years=2)):
+            creation_date_class = 'safe'
+        elif domain.creation_date < (datetime.today() - relativedelta(years=1)):
+            creation_date_class = 'warning'
+        else:
+            creation_date_class = 'critical'
         content = f"""
-        <div class="card">
+    <div class="card">
         <div class="image-container">
             <img src="{domain.screenshot}" alt="card image">
         </div>
@@ -92,7 +125,7 @@ def report_generation(domains :list):
                 <li><strong>URL:</strong> <a href="{domain.url}">{domain.url}</a></li>
                 <li><strong>Organization:</strong> {domain.organization}</li>
                 <li><strong>Registrar:</strong> {domain.registrar}</li>
-                <li><strong>Creation date:</strong> {domain.creation_date}</li>
+                <li><strong>Creation date:</strong> <span class="badge {creation_date_class}">{domain.creation_date}</span></li>
                 <li><strong>Update date:</strong> {domain.update_date}</li>
                 <li><strong>Expiration date:</strong> {domain.expiration_date}</li>
                 <li><strong>Emails:</strong> {domain.emails}</li>
