@@ -24,8 +24,8 @@ domains_object_list = []
 COUNT = 0
 for current_domain in all_domains:
     COUNT +=1
-    print(f"Fetching {COUNT}/{len(all_domains)} : {current_domain.ljust(len(max(all_domains, key=len)))}", end="\r")
-    domain_object = get_domain_informations(current_domain, driver)
+    print(f"Fetching {COUNT}/{len(all_domains)} : {current_domain.get('domain').ljust(max(len(domain['domain']) for domain in all_domains))}", end="\r")
+    domain_object = get_domain_informations(current_domain.get('domain'), current_domain.get('method'), driver)
     if domain_object:
         domains_object_list.append(domain_object)
 print()

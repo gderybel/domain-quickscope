@@ -62,13 +62,15 @@ def get_screenshot(url: str, driver: Browser) -> str:
 
     return filepath
 
-def get_domain_informations(domain_name: str, driver: Browser) -> Domain | None:
+def get_domain_informations(domain_name: str, finding_method: str, driver: Browser) -> Domain | None:
     """This function returns some informations about a domain.
 
     Parameters
     ----------
     domain_name : str
         The domain to fetch
+    finding_method : str
+        The method used to guess that name
     driver : Browser
         The browser to make requests with
 
@@ -102,7 +104,8 @@ def get_domain_informations(domain_name: str, driver: Browser) -> Domain | None:
             domain_info.expiration_date[0] if isinstance(domain_info.expiration_date, list) else domain_info.expiration_date,
             domain_info.emails,
             domain_info.country,
-            get_screenshot(domain_name, driver)
+            get_screenshot(domain_name, driver),
+            finding_method
         )
         return domain_object
     else:

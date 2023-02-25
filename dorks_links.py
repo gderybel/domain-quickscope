@@ -2,7 +2,7 @@ from urllib.parse import quote
 from requests import get
 from config_parser import parse_credentials
 
-def get_dorks_links(title: str) -> list[str]:
+def get_dorks_links(title: str) -> list[dict]:
     """This function will find every website that have the same title than 
     the given one. It uses Google Dorks with Google API.
 
@@ -18,7 +18,7 @@ def get_dorks_links(title: str) -> list[str]:
 
     Returns
     -------
-    list[str]
+    list[dict]
         List of links found based on Google Dorks
     """
     api_key, search_engine_id = parse_credentials()
@@ -45,7 +45,7 @@ def get_dorks_links(title: str) -> list[str]:
 
         if 'items' in data:
             for item in data['items']:
-                dorks_links.append(item['link'])
+                dorks_links.append({'domain':item['link'], 'method':'dorks'})
             start+=num
         else:
             break

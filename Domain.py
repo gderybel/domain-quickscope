@@ -15,7 +15,8 @@ class Domain:
         expiration_date: datetime,
         emails: list,
         country: str,
-        screenshot: str
+        screenshot: str,
+        method: str
     ):
         self.name = name
         self.url = url if url.startswith('http') else f"http://{url}"
@@ -27,3 +28,4 @@ class Domain:
         self.emails = ', '.join(emails) if isinstance(emails, list) else emails
         self.country = country
         self.screenshot = screenshot
+        self.method = method

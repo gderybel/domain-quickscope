@@ -177,7 +177,7 @@ def generate_tld_permutations(name: str) -> list:
         tld_permutations.append(f"{name}.{tld_name}")
     return tld_permutations
 
-def generate_permutations(domain: str) -> list:
+def generate_permutations(domain: str) -> list[dict]:
     """This function execute different permutations (character, hyphenation, bitsquatting,
     homoglyph, insertion and tld) and add a TLD to any of them.
 
@@ -188,33 +188,51 @@ def generate_permutations(domain: str) -> list:
 
     Returns
     -------
-    list
-        List of permuted domains.
+    list[dict]
+        List of permuted domains with their finding methods.
     """
+    default_tld = '.com'
+    domain_key = 'domain'
+    method_key = 'method'
     name = get_tld(f'http://{domain}', as_object = True).domain
     character_permutations = generate_character_permutations(name)
-    character_permutations = [permutation + '.com' for permutation in character_permutations]
+    character_permutations = [{domain_key:permutation + default_tld, method_key:'character'} for permutation in character_permutations]
     hyphenation_permutations = generate_hyphenation_permutations(name)
-    hyphenation_permutations = [permutation + '.com' for permutation in hyphenation_permutations]
+    hyphenation_permutations = [{domain_key:permutation + default_tld, method_key:'hyphenation'} for permutation in hyphenation_permutations]
     bitsquatting_permutations = generate_bitsquatting_permutations(name)
-    bitsquatting_permutations = [permutation + '.com' for permutation in bitsquatting_permutations]
+    bitsquatting_permutations = [{domain_key:permutation + default_tld, method_key:'bitquatting'} for permutation in bitsquatting_permutations]
     homoglyph_permutations = generate_homoglyph_permutations(name)
-    homoglyph_permutations = [permutation + '.com' for permutation in homoglyph_permutations]
+    homoglyph_permutations = [{domain_key:permutation + default_tld, method_key:'homoglyph'} for permutation in homoglyph_permutations]
     insertion_permutations = generate_insertion_permutations(name)
-    insertion_permutations = [permutation + '.com' for permutation in insertion_permutations]
+    insertion_permutations = [{domain_key:permutation + default_tld, method_key:'insertion'} for permutation in insertion_permutations]
     tld_permutations = generate_tld_permutations(name)
+    tld_permutations = [{domain_key:permutation, method_key:'tld'} for permutation in tld_permutations]
 
-    all_permutations = (
-        character_permutations +
-        hyphenation_permutations +
-        bitsquatting_permutations +
-        homoglyph_permutations +
-        insertion_permutations +
-        tld_permutations
-    )
+    all_permutations = character_permutations + hyphenation_permutations + bitsquatting_permutations + homoglyph_permutations + insertion_permutations + tld_permutations
 
-    all_permutations = [x.lower() for x in all_permutations]
+    return remove_duplicate_in_list_of_dicts_by_key(all_permutations, domain_key)
 
-    all_permutations = list(set(all_permutations))
+def remove_duplicate_in_list_of_dicts_by_key(list_of_dicts: list[dict], key: str) -> list[dict]:
+    """This function removes every duplicates by value in a list of dictionaries,
+    it additionaly put every value to lower case
 
-    return all_permutations
+    Parameters
+    ----------
+    list_of_dicts : list[dict]
+        List of dictionaries to update
+    key : str
+        Key to find duplicates
+
+    Returns
+    -------
+    list[dict]
+        List without duplicates
+    """
+    seen = set()
+    result = []
+    for dictionary in list_of_dicts:
+        value = dictionary.get(key)
+        if value not in seen:
+            seen.add(value)
+            result.append(dictionary)
+    return result

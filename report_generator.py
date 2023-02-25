@@ -99,6 +99,14 @@ def report_generation(domains :list):
         .unknown{
             background-color: #7C7C7C
         }
+
+        .info{
+            background-color: #0074D9;
+        }
+
+        h2 span{
+            font-size: 16px;
+        }
     </style>
   </head>
 
@@ -125,7 +133,7 @@ def report_generation(domains :list):
             <img src="{domain.screenshot}" alt="card image">
         </div>
         <div class="content">
-        <h2>{domain.name}</h2>
+        <h2>{domain.name} <span class="badge info">{domain.method}</span></h2>
             <ul>
                 <li><strong>URL:</strong> <a href="{domain.url}">{domain.url}</a></li>
                 <li><strong>Organization:</strong> {domain.organization}</li>
