@@ -8,6 +8,8 @@ class Browser():
     def __init__(self):
         options = Options()
         options.add_argument('--headless')
+        options.add_argument('--window-size=1366,768')
+        options.add_argument('--hide-scrollbars',)
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
         self.driver = webdriver.Chrome(options=options)
