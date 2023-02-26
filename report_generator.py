@@ -1,7 +1,8 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from domain import Domain
 
-def report_generation(domains :list):
+def report_generation(domains :list[Domain]):
     """This function will generate a report showing every similar
         websites based on Dorks and similar domain names.
 
@@ -13,7 +14,7 @@ def report_generation(domains :list):
 
     Parameters
     ----------
-    domains : list
+    domains : list[Domain]
         Domains to include
     """
 
@@ -129,7 +130,9 @@ def report_generation(domains :list):
         else:
             creation_date_class = 'critical'
 
-        if domain.similarity > 75:
+        if not domain.similarity:
+            similarity_class = 'unknown'
+        elif domain.similarity > 75:
             similarity_class = 'critical'
         elif domain.similarity > 40:
             similarity_class = 'warning'
